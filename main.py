@@ -2,10 +2,11 @@
 #
 #  Copyright (c) 2020. Johns Hopkins University - All rights reserved.
 import numpy
-import torch.nn as nn
+
 import argparse
 import os
 import random
+
 
 import numpy as np
 import torch
