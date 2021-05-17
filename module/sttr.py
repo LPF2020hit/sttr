@@ -62,7 +62,7 @@ class STTR(nn.Module):
         make all ReLU inplace
         """
         for m in self.modules():
-            if isinstance(m, nn.BatchNorm2d):
+            if isinstance(m, nn.ReLU):
                 m.inplace = True
 
     def forward(self, x: NestedTensor):
@@ -92,6 +92,8 @@ class STTR(nn.Module):
         if x.sampled_rows is not None:
             feat_left = batched_index_select(feat_left, 2, x.sampled_rows)
             feat_right = batched_index_select(feat_right, 2, x.sampled_rows)
+
+            aa=feat_right.shape
 
         # transformer
         attn_weight = self.transformer(feat_left, feat_right, pos_enc)

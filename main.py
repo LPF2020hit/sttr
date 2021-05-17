@@ -1,7 +1,7 @@
 #  Authors: Zhaoshuo Li, Xingtong Liu, Francis X. Creighton, Russell H. Taylor, and Mathias Unberath
 #
 #  Copyright (c) 2020. Johns Hopkins University - All rights reserved.
-
+import numpy
 import argparse
 import os
 import random
@@ -31,7 +31,8 @@ def get_args_parser():
     parser.add_argument('--lr_backbone', default=1e-4, type=float)
     parser.add_argument('--lr_regression', default=2e-4, type=float)
     parser.add_argument('--lr_decay_rate', default=0.99, type=float)
-    parser.add_argument('--batch_size', default=1, type=int)
+    parser.add_argument('--batch_size', default=4, type=int)
+    parser.add_argument('--test_batch_size', default=2, type=int)
     parser.add_argument('--weight_decay', default=1e-4, type=float)
     parser.add_argument('--epochs', default=300, type=int)
     parser.add_argument('--clip_max_norm', default=0.1, type=float,
@@ -189,7 +190,7 @@ def main(args):
     # inference
     if args.inference:
         print("Start inference")
-        _, _, data_loader = build_data_loader(args)
+        _, data_loader = build_data_loader(args)
         inference(model, data_loader, device, args.downsample)
 
         return
@@ -219,7 +220,9 @@ def main(args):
     for epoch in range(args.start_epoch, args.epochs):
         # train
         print("Epoch: %d" % epoch)
-        train_one_epoch(model, data_loader_train, optimizer, criterion, device, epoch, summary_writer,
+        #train_one_epoch(model, data_loader_train, optimizer, criterion, device, epoch, summary_writer,
+         #               args.clip_max_norm, amp)
+        train_one_epoch(model, data_loader_val, optimizer, criterion, device, epoch, summary_writer,
                         args.clip_max_norm, amp)
 
         # step lr if not pretraining
@@ -232,14 +235,12 @@ def main(args):
 
         # save if pretrain, save every 50 epochs
         if args.pre_train or epoch % 50 == 0:
+            print("savemodel_________+++++++__+_+_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_++++____+_+_+")
             save_checkpoint(epoch, model, optimizer, lr_scheduler, prev_best, checkpoint_saver, False, amp)
 
         # validate
         eval_stats = evaluate(model, criterion, data_loader_val, device, epoch, summary_writer, False)
-        # save if best
-        if prev_best > eval_stats['epe'] and 0.5 > eval_stats['px_error_rate']:
-            save_checkpoint(epoch, model, optimizer, lr_scheduler, prev_best, checkpoint_saver, True, amp)
-
+        # save if best 
     # save final model
     save_checkpoint(epoch, model, optimizer, lr_scheduler, prev_best, checkpoint_saver, False, amp)
 

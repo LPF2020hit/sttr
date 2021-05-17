@@ -15,7 +15,7 @@ from utilities.summary_logger import TensorboardSummary
 @torch.no_grad()
 def evaluate(model: torch.nn.Module, criterion: torch.nn.Module, data_loader: Iterable, device: torch.device,
              epoch: int, summary: TensorboardSummary, save_output: bool):
-    model.eval()
+    model.train()
     criterion.eval()
 
     # initialize stats

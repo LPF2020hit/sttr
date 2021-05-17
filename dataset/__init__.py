@@ -71,7 +71,7 @@ def build_data_loader(args):
                                         num_workers=args.num_workers, pin_memory=True)
     #data_loader_validation = data.DataLoader(dataset_validation, batch_size=args.batch_size, shuffle=False,
     #                                         num_workers=args.num_workers, pin_memory=True)
-    data_loader_test = data.DataLoader(dataset_test, batch_size=args.batch_size, shuffle=False,
+    data_loader_test = data.DataLoader(dataset_test, batch_size=args.test_batch_size, shuffle=False,
                                        num_workers=args.num_workers, pin_memory=True)
 
     return data_loader_train,data_loader_test

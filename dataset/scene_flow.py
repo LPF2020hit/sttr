@@ -130,10 +130,35 @@ class SceneFlowFlyingThingsDataset(data.Dataset):
         disp_left, _ = readPFM(disp_left_fname)
         disp_right, _ = readPFM(disp_right_fname)
 
+        imgleft=np.array(result["left"])
+        np.save("./leftimg",imgleft)
+
+        disp_out=np.array(disp_left)
+        np.save("./displeft_out",disp_out)
+
+        disp_outr=np.array(disp_right)
+        np.save("./dispright_out",disp_outr)
+
+        occleft=np.array(occ_left)
+        np.save("./occleft",occleft)
+
+        occright=np.array(occ_right)
+        np.save("./occright",occright)
+
+
+
+
+
+
         if self.split == "train":
             # horizontal flip
+            #result['left'], result['right'], result['occ_mask'], result['occ_mask_right'], disp, disp_right \
+            #    = horizontal_flip(result['left'], result['right'], occ_left, occ_right, disp_left, disp_right, self.split)
+
             result['left'], result['right'], result['occ_mask'], result['occ_mask_right'], disp, disp_right \
-                = horizontal_flip(result['left'], result['right'], occ_left, occ_right, disp_left, disp_right, self.split)
+                =result['left'], result['right'], occ_left, occ_right, disp_left, disp_right
+
+
             result['disp'] = np.nan_to_num(disp, nan=0.0)
             result['disp_right'] = np.nan_to_num(disp_right, nan=0.0)
 
@@ -146,7 +171,7 @@ class SceneFlowFlyingThingsDataset(data.Dataset):
             result['disp_right'] = disp_right
 
         result = augment(result, self.transformation)
-
+        #cc=result["disp"] 
         return result
 
 """

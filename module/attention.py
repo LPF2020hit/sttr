@@ -82,7 +82,12 @@ class MultiheadAttentionRelative(nn.MultiheadAttention):
         q = q * scaling
         if q_r is not None:
             q_r = q_r * scaling
+        qshape=q.shape
+        kshape=k.shape
+        vshape=v.shape
 
+        qrshape=q_r.shape
+        krshape=k_r.shape
         # reshape
         q = q.contiguous().view(w, bsz, self.num_heads, head_dim)  # WxNxExC
         if k is not None:
@@ -97,12 +102,22 @@ class MultiheadAttentionRelative(nn.MultiheadAttention):
 
         # compute attn weight
         attn_feat = torch.einsum('wnec,vnec->newv', q, k)  # NxExWxW'
+        qshape1=q.shape
+        kshape1=k.shape
+        vshape1=v.shape
+
+        qrshape1=q_r.shape
+        krshape1=k_r.shape
 
         # add positional terms
         if pos_enc is not None:
             # 0.3 s
             attn_feat_pos = torch.einsum('wnec,wvec->newv', q, k_r)  # NxExWxW'
+            attnfeatshape=attn_feat_pos.shape
+ 
+
             attn_pos_feat = torch.einsum('vnec,wvec->newv', k, q_r)  # NxExWxW'
+            attnfeatshape=attn_pos_feat.shape
 
             # 0.1 s
             attn = attn_feat + attn_feat_pos + attn_pos_feat

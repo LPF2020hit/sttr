@@ -91,6 +91,7 @@ class Transformer(nn.Module):
 
         # flatten NxCxHxW to WxHNxC
         bs, c, hn, w = feat_left.shape
+        
 
         feat_left = feat_left.permute(1, 3, 2, 0).flatten(2).permute(1, 2, 0)  # CxWxHxN -> CxWxHN -> WxHNxC
         feat_right = feat_right.permute(1, 3, 2, 0).flatten(2).permute(1, 2, 0)
@@ -107,7 +108,8 @@ class Transformer(nn.Module):
         feat = torch.cat([feat_left, feat_right], dim=1)  # Wx2HNxC
 
         # compute attention
-        attn_weight = self._alternating_attn(feat, pos_enc, pos_indexes, hn)
+        attn_weight = self._alternating_attn(feat, pos_enc, pos_indexes, bs*hn)
+
         attn_weight = attn_weight.view(hn, bs, w, w).permute(1, 0, 2, 3)  # NxHxWxW, dim=2 left image, dim=3 right image
 
         return attn_weight
@@ -143,6 +145,7 @@ class TransformerSelfAttnLayer(nn.Module):
         # torch.save(attn_weight, 'self_attn_' + str(layer_idx) + '.dat')
 
         feat = feat + feat2
+        featshape=feat.shape
 
         return feat
 
@@ -172,7 +175,10 @@ class TransformerCrossAttnLayer(nn.Module):
         :return: update image feature and attention weight
         """
         feat_left_2 = self.norm1(feat_left)
+        featleft2shape=feat_left_2.shape
+
         feat_right_2 = self.norm1(feat_right)
+        featright2shape=feat_right_2.shape
 
         # torch.save(torch.cat([feat_left_2, feat_right_2], dim=1), 'feat_cross_attn_input_' + str(layer_idx) + '.dat')
 

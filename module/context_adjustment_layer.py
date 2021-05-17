@@ -42,6 +42,9 @@ class ContextAdjustmentLayer(nn.Module):
             disp_final: final disparity [N,1,H,W]
             occ_final: final occlusion [N,1,H,W] 
         """""
+
+        imgshape=img.shape
+        disp_raws=disp_raw.shape
         feat = self.in_conv(torch.cat([disp_raw, img], dim=1))
         for layer in self.layers:
             feat = layer(feat, disp_raw)

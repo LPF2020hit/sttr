@@ -106,10 +106,17 @@ def random_crop(min_crop_height, min_crop_width, input_data, split):
         y1 = 0
         y2 = height - 1
     else:
-        crop_height = random.randint(min_crop_height, height)
-        crop_width = random.randint(min_crop_width, width)
 
-        x1, y1, x2, y2 = get_random_crop_coords(height, width, crop_height, crop_width)
+        #crop_height = random.randint(min_crop_height, height)
+        #crop_width = random.randint(min_crop_width, width)
+
+        x1=random.randint(0,width-640)
+        y1=random.randint(0,height-360)
+
+        x2=x1+640
+        y2=y1+360
+
+        #x1, y1, x2, y2 = get_random_crop_coords(height, width, crop_height, crop_width)
 
     input_data['left'] = crop(input_data['left'], x1, y1, x2, y2)
     input_data['right'] = crop(input_data['right'], x1, y1, x2, y2)

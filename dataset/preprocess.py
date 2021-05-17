@@ -82,7 +82,8 @@ def augment(input_data, transformation):
     w = input_data['disp'].shape[-1]
     # set large/small values to be 0
     input_data['disp'][input_data['disp'] > w] = 0
-    input_data['disp'][input_data['disp'] < 0] = 0
+    input_data['disp'][input_data['disp'] > 0] = 0
+    input_data["disp"]=-input_data["disp"]
 
     # manually compute occ area (this is necessary after cropping)
     occ_mask = compute_left_occ_region(w, input_data['disp'])

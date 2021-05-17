@@ -71,6 +71,9 @@ class RegressionHead(nn.Module):
         # compute low res disparity
         disp_pred_low_res = (attn_weight_rw * pos_rw)  # NxHxW
 
+        disp_raw=disp_pred_low_res.sum(-1)
+        disprawshape=disp_raw.shape
+
         return disp_pred_low_res.sum(-1), norm
 
     def _compute_gt_location(self, scale: int, sampled_cols: Tensor, sampled_rows: Tensor,
@@ -117,9 +120,15 @@ class RegressionHead(nn.Module):
         # scale disparity
         disp_pred_attn = disp_pred * scale
 
+        dispredattnshape=disp_pred_attn.shape
+        occpedshape=occ_pred.shape
+
         # upsample
-        disp_pred = F.interpolate(disp_pred_attn[None,], size=(h, w), mode='nearest')  # N x 1 x H x W
-        occ_pred = F.interpolate(occ_pred[None,], size=(h, w), mode='nearest')  # N x 1 x H x W
+        disp_pred = F.interpolate(disp_pred_attn[:,None,], size=(h, w), mode='nearest')  # N x 1 x H x W
+        disppredshape=disp_pred.shape
+
+        occ_pred = F.interpolate(occ_pred[:,None,], size=(h, w), mode='nearest')  # N x 1 x H x W
+        occpredshape=occ_pred.shape
 
         if self.cal is not None:
             # normalize disparity

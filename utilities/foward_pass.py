@@ -73,5 +73,5 @@ def forward_pass(model, data, device, criterion, stats, idx=0, logger=None):
         logger.info('Index %d, l1_raw %.4f, rr %.4f, l1 %.4f, occ_be %.4f, epe %.4f, iou %.4f, px error %.4f' %
                     (idx, losses['l1_raw'].item(), losses['rr'].item(), losses['l1'].item(), losses['occ_be'].item(),
                      losses['epe'].item(), losses['iou'].item(), losses['error_px'] / losses['total_px']))
-
+    print(losses)
     return outputs, losses, disp
